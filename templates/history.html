@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>History — GenreLens</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07090d;
+      --surface: #0e1219;
+      --surface2: #141820;
+      --surface3: #1a2030;
+      --border: rgba(255,255,255,0.06);
+      --border-hover: rgba(99,217,160,0.3);
+      --green: #63d9a0;
+      --green-dim: #2a7a55;
+      --green-glow: rgba(99,217,160,0.12);
+      --purple: #a78bfa;
+      --amber: #f5c542;
+      --text: #e8edf5;
+      --text-muted: #6b7a8d;
+      --text-dim: #3a4555;
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(99,217,160,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,217,160,0.025) 1px, transparent 1px);
+      background-size: 52px 52px;
+      pointer-events: none; z-index: 0;
+    }
+    .orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
+    .orb-1 { width: 360px; height: 360px; background: radial-gradient(circle, rgba(99,217,160,0.06) 0%, transparent 70%); top: -80px; right: -80px; }
+    .orb-2 { width: 260px; height: 260px; background: radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 70%); bottom: 60px; left: -60px; }
+    .page { position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 36px 24px 60px; }
+
+    /* topbar */
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; flex-wrap: wrap; gap: 12px; }
+    .logo { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+    .logo-disc {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      background: conic-gradient(
+        #1a2e22 0deg 20deg, #63d9a0 20deg 40deg, #0e1219 40deg 65deg,
+        #63d9a0 65deg 85deg, #1a2e22 85deg 110deg, #2a7a55 110deg 140deg,
+        #0e1219 140deg 165deg, #63d9a0 165deg 185deg, #1a2e22 185deg 210deg,
+        #63d9a0 210deg 235deg, #0e1219 235deg 260deg, #2a7a55 260deg 295deg,
+        #1a2e22 295deg 325deg, #63d9a0 325deg 345deg, #0e1219 345deg 360deg
+      );
+      display: flex; align-items: center; justify-content: center;
+      animation: spinDisc 7s linear infinite;
+    }
+    .logo-disc-hole { width: 10px; height: 10px; border-radius: 50%; background: var(--bg); }
+    @keyframes spinDisc { to { transform: rotate(360deg); } }
+    .logo-text { font-size: 17px; font-weight: 700; letter-spacing: -0.4px; color: var(--text); }
+    .logo-text span { color: var(--green); }
+    .btn-ghost {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 15px; background: transparent; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text-muted);
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      cursor: pointer; text-decoration: none;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .btn-ghost:hover { border-color: var(--border-hover); color: var(--green); background: var(--green-glow); }
+    .btn-ghost svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .btn-primary {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px; background: var(--green); color: #061a10;
+      border: none; border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 13px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: opacity .2s, box-shadow .2s;
+    }
+    .btn-primary:hover { opacity: .88; box-shadow: 0 0 18px rgba(99,217,160,0.25); color: #061a10; }
+    .btn-primary svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+
+    /* page header */
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: clamp(22px, 4vw, 32px); font-weight: 700; letter-spacing: -1px; margin-bottom: 6px; }
+    .page-header p { font-size: 14px; color: var(--text-muted); }
+    .count-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 11px; border-radius: 999px;
+      background: var(--green-glow); border: 1px solid var(--green-dim);
+      font-family: 'Space Mono', monospace; font-size: 11px; color: var(--green);
+      margin-left: 10px; vertical-align: middle;
+    }
+
+    /* grid */
+    .hist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
+    /* card */
+    .hist-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .25s, transform .25s;
+    }
+    .hist-card:hover { border-color: rgba(99,217,160,0.2); transform: translateY(-2px); }
+    .thumb-wrap { position: relative; overflow: hidden; background: var(--bg); }
+    .thumb-wrap img { width: 100%; height: 148px; object-fit: cover; display: block; transition: transform .35s; }
+    .hist-card:hover .thumb-wrap img { transform: scale(1.04); }
+    .thumb-genre-badge {
+      position: absolute; top: 10px; right: 10px;
+      padding: 4px 11px; border-radius: 999px;
+      background: rgba(7,9,13,0.82); border: 1px solid var(--green-dim);
+      font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700;
+      color: var(--green); letter-spacing: 0.5px;
+      backdrop-filter: blur(6px);
+    }
+
+    .card-body { padding: 14px 16px 16px; }
+    .card-filename {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-muted);
+      margin-bottom: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .card-filename svg { width: 12px; height: 12px; stroke: var(--green); fill: none; stroke-width: 1.8; flex-shrink: 0; }
+    .card-genre { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); margin-bottom: 5px; }
+    .card-mood {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      background: rgba(245,197,66,0.09); border: 1px solid rgba(245,197,66,0.22);
+      font-size: 11px; font-weight: 600; color: var(--amber);
+      font-family: 'Space Mono', monospace; margin-bottom: 12px;
+    }
+    .card-ts {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; color: var(--text-dim);
+      font-family: 'Space Mono', monospace; margin-bottom: 12px;
+    }
+    .card-ts svg { width: 12px; height: 12px; stroke: var(--text-dim); fill: none; stroke-width: 1.6; }
+    .card-foot { border-top: 1px solid var(--border); padding-top: 12px; }
+    .btn-play {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; background: var(--surface3);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text-muted); font-family: inherit; font-size: 12px; font-weight: 500;
+      text-decoration: none; transition: border-color .2s, color .2s, background .2s;
+    }
+    .btn-play:hover { border-color: var(--green-dim); color: var(--green); background: var(--green-glow); }
+    .btn-play svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    /* empty state */
+    .empty-state {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 64px 32px; text-align: center;
+    }
+    .empty-disc {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: conic-gradient(
+        #1a2e22 0deg 30deg, #0e1219 30deg 60deg, #1a2e22 60deg 90deg,
+        #0e1219 90deg 120deg, #1a2e22 120deg 150deg, #0e1219 150deg 180deg,
+        #1a2e22 180deg 210deg, #0e1219 210deg 240deg, #1a2e22 240deg 270deg,
+        #0e1219 270deg 300deg, #1a2e22 300deg 330deg, #0e1219 330deg 360deg
+      );
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; opacity: 0.4;
+    }
+    .empty-disc-hole { width: 22px; height: 22px; border-radius: 50%; background: var(--bg); }
+    .empty-state h2 { font-size: 18px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+    .empty-state p { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="page">
+
+  <!-- topbar -->
+  <div class="topbar">
+    <a href="/" class="logo">
+      <div class="logo-disc"><div class="logo-disc-hole"></div></div>
+      <div class="logo-text">Genre<span>Lens</span></div>
+    </a>
+    <a href="/" class="btn-ghost">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </a>
+  </div>
+
+  <!-- page header -->
+  <div class="page-header">
+    <h1>
+      Session History
+      {% if history %}
+        <span class="count-chip">{{ history|length }} track{% if history|length != 1 %}s{% endif %}</span>
+      {% endif %}
+    </h1>
+    <p>Tracks classified in this session — results are cleared when you close the tab.</p>
+  </div>
+
+  {% if history %}
+  <div class="hist-grid">
+    {% for item in history %}
+    <div class="hist-card">
+      <div class="thumb-wrap">
+        <img src="{{ item.spectrogram_url }}" alt="spectrogram for {{ item.filename }}">
+        <div class="thumb-genre-badge">{{ item.final_genre.upper() }}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-filename">
+          <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          {{ item.filename }}
+        </div>
+        <div class="card-genre">{{ item.final_genre }}</div>
+        <div class="card-mood">{{ item.mood }}</div>
+        <div class="card-ts">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ item.timestamp }}
+        </div>
+        <div class="card-foot">
+          <a class="btn-play" href="{{ item.audio_url }}" target="_blank">
+            <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Play
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-disc"><div class="empty-disc-hole"></div></div>
+    <h2>No tracks classified yet</h2>
+    <p>Upload a track on the main page and classify it — it'll appear here.</p>
+    <a href="/" class="btn-primary">
+      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Classify a Track
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+</body>
+</html>
